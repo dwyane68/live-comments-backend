@@ -8,12 +8,13 @@ class YoutubeController {
   public commentService = new CommentService();
 
   public subscribe = async (req: any, res: Response, next: NextFunction) => {
+    console.log(req.body.url);
     
     const queryObject = url.parse(req.body.url,true).query;
-    const videoId = queryObject.v;
-    const keywords = queryObject.keywords.split(",");
-    const roomId = req.user.sub;
     try {
+      const videoId = queryObject.v;
+      const keywords = queryObject.keywords.split(",");
+      const roomId = req.user.sub;
       const message = await this.commentService.getComments(roomId, videoId, keywords);
       res.status(201).json(message);
     } catch (error) {
@@ -21,10 +22,10 @@ class YoutubeController {
     }
   }
 
-  public unSubscribe = async (req: any, res: Response, next: NextFunction) => {
-    const roomId = req.user.sub;
+  public unsubscribe = async (req: any, res: Response, next: NextFunction) => {
     try {
-      const message = await this.commentService.unSubscribe(roomId);
+      const roomId = req.user.sub;
+      const message = await this.commentService.unsubscribe(roomId);
       res.status(201).json(message);
     } catch (error) {
       next(error);

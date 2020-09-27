@@ -74,7 +74,7 @@ class App {
     passport.use(new GoogleStrategy({
       clientID: '113357917861-dp79sii6f7n6gfg8bj8hpvgvnthaebj8.apps.googleusercontent.com',
       clientSecret: 'cEufGj8Nnu0AQ1o3s_Px6XQs',
-      callbackURL: 'http://localhost:1337/auth/google/callback'
+      callbackURL: 'http://localhost:3000/auth/google/callback'
     },
     function(accessToken: string, refreshToken: string, profile: any, done: Function) {
       done(null, profile);
@@ -103,8 +103,8 @@ class App {
       console.log('Client connected.');
       socket.on('disconnect', () => console.log('a user disconnected'));
       socket.on('join', (data: any) => {
-        console.log(data.emailId);
-        socket.join(data.emailId);
+        console.log(data.sub);
+        socket.join(data.sub);
       });
     });
   }

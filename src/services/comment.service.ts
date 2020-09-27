@@ -4,9 +4,9 @@ import HttpException from '../exceptions/HttpException';
 import { User } from '../interfaces/users.interface';
 import { Comment } from '../interfaces/comments.interface';
 import userModel from '../models/users.model';
-import { isEmptyObject } from '../utils/util';
+import { isEmptyObject, containsKeywords } from '../utils/util';
 import YoutubeServie from './youtube.service';
-import app from './../server';
+import app from './../server';  
 const {EventEmitter} = require('events');
 
 class CommentService {
@@ -18,26 +18,36 @@ class CommentService {
     this.ys = new YoutubeServie(videoId,process.env.API_KEY);
     app.setYoutubeServie(this.ys);
     this.ys.on('ready', () => {
-      this.ys.listen(1000)
+      this.ys.listen(10000)
     })
      
     this.ys.on('message', (data: any) => {
-      console.log(data.snippet.displayMessage)
-      app.io.sockets.in(roomId).emit('message', {
-        code: 'message',
-        message: data.snippet.displayMessage
-      });
+      if(containsKeywords(keywords, data.snippet.displayMessage)) {
+        app.io.sockets.in(roomId).emit('message', {
+          code: 'message',
+          message: data
+        });
+      }
     })
      
     this.ys.on('error', (error: Function) => {
-      console.error(error)
+      app.io.sockets.in(roomId).emit('message', {
+        code: 'error',
+        message: 'Cannot fetch comments'
+      });
+      this.ys.stop();
     })
 
     return { message: "Subscribed"};
   }
-  public async unSubscribe(roomId: string): Promise<Object> {
-    this.ys = app.getYoutubeServie();
-    this.ys.stop();
+
+  public async unsubscribe(roomId: string): Promise<Object> {
+    try{
+      this.ys = app.getYoutubeServie();
+      this.ys.stop();
+    } catch(error) {
+
+    }
 
     return { message: "Unsubscribed"};
   }

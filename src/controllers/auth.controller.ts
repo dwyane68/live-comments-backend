@@ -9,7 +9,7 @@ class AuthController {
     const userData: CreateUserDto = req.user._json;
     try {
       const { token, findUser } = await this.authService.googleLogin(userData);
-      res.status(200).json({ data: {user: findUser, token}, message: 'success' });
+      res.status(200).json({ data: {user: findUser, jwt: token}, message: 'success' });
     } catch (error) {
       next(error);
     }

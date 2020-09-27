@@ -14,6 +14,7 @@ class YoutubeRoute implements Route {
 
   private initializeRoutes() {
     this.router.post(`/subscribe`, authMiddleware, this.youtubeController.subscribe);
+    this.router.post(`/unsubscribe`, authMiddleware, this.youtubeController.unsubscribe);
     // this.router.post(`/subscribe`, this.youtubeController.subscribe);
     
   }
