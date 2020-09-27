@@ -7,6 +7,7 @@ import * as logger from 'morgan';
 import Routes from './interfaces/routes.interface';
 import errorMiddleware from './middlewares/error.middleware';
 import * as passport from 'passport';
+import YoutubeServie from 'services/youtube.service';
 const GoogleStrategy = require('passport-google-oauth20');
 const ExtractJwt = require('passport-jwt').ExtractJwt;
 const JwtStrategy = require('passport-jwt').Strategy;
@@ -16,6 +17,9 @@ class App {
   public port: (string | number);
   public env: boolean;
   public passport: any;
+  public io: any;
+  public server: any;
+  public ys: YoutubeServie;
 
   constructor(routes: Routes[]) {
     this.app = express();
@@ -29,9 +33,10 @@ class App {
   }
 
   public listen() {
-    this.app.listen(this.port, () => {
+    this.server = this.app.listen(this.port, () => {
       console.log(`🚀 App listening on the port ${this.port}`);
     });
+    this.initializeSocketIO();
   }
 
   public getServer() {
@@ -89,6 +94,27 @@ class App {
     }, (token: object, done: any) => {
         return done(null, token);
     }));
+  }
+
+  private initializeSocketIO() {
+    this.io = require('socket.io')(this.server);
+    this.io.listen(1342);
+    this.io.on('connection', (socket: any) => {
+      console.log('Client connected.');
+      socket.on('disconnect', () => console.log('a user disconnected'));
+      socket.on('join', (data: any) => {
+        console.log(data.emailId);
+        socket.join(data.emailId);
+      });
+    });
+  }
+
+  public setYoutubeServie(ys: YoutubeServie) {
+    this.ys = ys;
+  }
+
+  public getYoutubeServie() {
+    return this.ys;
   }
 }
 

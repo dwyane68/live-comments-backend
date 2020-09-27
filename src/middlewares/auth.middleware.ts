@@ -12,8 +12,6 @@ function authMiddleware(req: RequestWithUser, res: Response, next: NextFunction)
     } 
     try {
       const user = userModel.find(user => user.id === token.id);
-      console.log(user, userModel);
-      
       if(!user) {
         next(new HttpException(401, 'Unauthorized'));
       }
