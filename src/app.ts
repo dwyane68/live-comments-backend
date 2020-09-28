@@ -23,7 +23,7 @@ class App {
 
   constructor(routes: Routes[]) {
     this.app = express();
-    this.port = process.env.PORT || 1337;
+    this.port = process.env.PORT || 8080;
     this.env = process.env.NODE_ENV === 'production' ? true : false;
 
     this.initializeMiddlewares();
@@ -98,7 +98,7 @@ class App {
 
   private initializeSocketIO() {
     this.io = require('socket.io')(this.server);
-    this.io.listen(1342);
+    // this.io.listen(1342);
     this.io.on('connection', (socket: any) => {
       console.log('Client connected.');
       socket.on('disconnect', () => console.log('a user disconnected'));
