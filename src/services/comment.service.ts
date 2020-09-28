@@ -22,6 +22,8 @@ class CommentService {
     })
      
     this.ys.on('message', (data: any) => {
+      console.log(data.snippet.displayMessage);
+      
       if(containsKeywords(keywords, data.snippet.displayMessage)) {
         app.io.sockets.in(roomId).emit('message', {
           code: 'message',
@@ -30,7 +32,9 @@ class CommentService {
       }
     })
      
-    this.ys.on('error', (error: Function) => {
+    this.ys.on('error', (error: Object) => {
+      console.log(error);
+      
       app.io.sockets.in(roomId).emit('message', {
         code: 'error',
         message: 'Cannot fetch comments'
