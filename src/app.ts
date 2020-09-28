@@ -48,7 +48,7 @@ class App {
       this.app.use(hpp());
       this.app.use(helmet());
       this.app.use(logger('combined'));
-      this.app.use(cors({ origin: 'your.domain.com', credentials: true }));
+      this.app.use(cors({ origin: process.env.APP_URL, credentials: true }));
     } else {
       this.app.use(logger('dev'));
       this.app.use(cors({ origin: true, credentials: true }));
@@ -74,7 +74,7 @@ class App {
     passport.use(new GoogleStrategy({
       clientID: '113357917861-dp79sii6f7n6gfg8bj8hpvgvnthaebj8.apps.googleusercontent.com',
       clientSecret: 'cEufGj8Nnu0AQ1o3s_Px6XQs',
-      callbackURL: 'http://localhost:3000/auth/google/callback'
+      callbackURL: `${process.env.APP_URL}/auth/google/callback`
     },
     function(accessToken: string, refreshToken: string, profile: any, done: Function) {
       done(null, profile);
